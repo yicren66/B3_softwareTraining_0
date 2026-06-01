@@ -1,0 +1,26 @@
+# Core inference
+torch>=2.0.0
+torchvision>=0.15.0
+onnx>=1.14.0
+onnxruntime>=1.15.0
+onnxruntime-gpu>=1.15.0  # Use CUDAExecutionProvider
+numpy>=1.24.0
+
+# Optional: TensorRT
+# tensorrt>=8.6.0
+# pycuda>=2023.1
+
+# Image processing
+Pillow>=10.0.0
+
+# Serving
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+grpcio>=1.56.0
+protobuf>=4.23.0
+
+# Observability
+prometheus-client>=0.17.0
+
+# Utilities
+python-dotenv>=1.0.0

@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jujube-config
+  namespace: jujube
+  labels:
+    app.kubernetes.io/name: jujube-platform
+data:
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  DB_HOST: "postgres.jujube.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "jujube_platform"
+  NEO4J_URI: "bolt://neo4j.jujube.svc.cluster.local:7687"
+  REDIS_HOST: "redis.jujube.svc.cluster.local"
+  REDIS_PORT: "6379"
+  IR_SERVICE_ADDR: "image-recognition.jujube.svc.cluster.local:9001"
+  KG_SERVICE_ADDR: "knowledge-graph.jujube.svc.cluster.local:9002"
+  REASONING_SERVICE_ADDR: "reasoning-engine.jujube.svc.cluster.local:9003"
+  MODEL_SERVICE_ADDR: "model-management.jujube.svc.cluster.local:9004"
+  LOG_SERVICE_ADDR: "log-statistics.jujube.svc.cluster.local:9005"
+  IR_INFERENCE_BACKEND: "onnxruntime"
+  IR_USE_GPU: "true"
+  IR_CONFIDENCE_THRESHOLD: "0.5"
+  IR_MAX_BATCH_SIZE: "32"
+  IR_HTTP_PORT: "8001"
+  IR_GRPC_PORT: "9001"

@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-management
+  namespace: jujube
+  labels:
+    app: model-management
+    app.kubernetes.io/name: jujube-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-management
+  template:
+    metadata:
+      labels:
+        app: model-management
+    spec:
+      containers:
+        - name: model-management
+          image: jujube/model-management:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: jujube-config
+            - secretRef:
+                name: jujube-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

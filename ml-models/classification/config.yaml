@@ -1,0 +1,136 @@
+# =============================================================================
+# Jujube Classifier — Training Configuration
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Model architecture
+# ---------------------------------------------------------------------------
+model:
+  backbone: efficientnet_b4          # timm backbone name
+  pretrained: true                   # use ImageNet pretrained weights
+  num_classes: 15                    # 「7病8虫」15类核心防控对象
+  image_size: [3, 380, 380]          # [channels, height, width]
+  dropout: 0.3                       # classifier head dropout
+
+# ---------------------------------------------------------------------------
+# Data
+# ---------------------------------------------------------------------------
+data:
+  annotation_path: annotations.csv   # path to CSV/JSON annotation file
+  image_dir: ""                      # root directory for images (prepended)
+  train_ratio: 0.70                  # fraction for training
+  val_ratio: 0.15                    # fraction for validation
+  test_ratio: 0.15                   # fraction for testing
+  stratify: true                     # maintain class distribution in splits
+
+# ---------------------------------------------------------------------------
+# Training hyperparameters
+# ---------------------------------------------------------------------------
+training:
+  batch_size: 32                     # samples per GPU
+  epochs: 80                         # total training epochs
+  lr: 0.001                          # initial learning rate
+  min_lr: 1.e-6                      # minimum LR for cosine annealing
+  optimizer: adamw                   # optimizer type
+  weight_decay: 0.0001               # AdamW weight decay
+  max_grad_norm: 1.0                 # gradient clipping threshold
+  num_workers: 4                     # DataLoader workers
+  output_dir: ./outputs              # root output directory
+  tensorboard: true                   # enable TensorBoard logging
+  export_onnx: true                  # export ONNX after training
+
+  # Cosine annealing warm restarts
+  cosine_t0: 10                      # epochs per restart cycle
+  cosine_t_mult: 1                   # T_0 multiplier after each restart
+
+# ---------------------------------------------------------------------------
+# Loss function
+# ---------------------------------------------------------------------------
+loss:
+  type: focal                        # 'focal' or 'ce'
+  cls_weight: 1.0                    # classification loss weight
+  focal_alpha: 0.25                  # focal loss alpha (overall scale)
+  focal_gamma: 2.0                   # focal loss gamma (focusing param)
+  label_smoothing: 0.0               # label smoothing factor
+
+# ---------------------------------------------------------------------------
+# Augmentation
+# ---------------------------------------------------------------------------
+augmentation:
+  # Training transforms
+  crop_scale: [0.6, 1.0]             # RandomResizedCrop scale range
+  rotation_limit: 45                 # max rotation degrees
+  brightness_limit: 0.3             # BrightnessContrast brightness limit
+  contrast_limit: 0.3               # BrightnessContrast contrast limit
+  hue_shift_limit: 20               # HueSaturationValue hue shift
+  sat_shift_limit: 30               # HueSaturationValue saturation shift
+  val_shift_limit: 20               # HueSaturationValue value shift
+  noise_var_limit: [10.0, 50.0]     # GaussNoise variance range
+  dropout_max_holes: 8              # CoarseDropout max holes
+  dropout_max_height: 32            # CoarseDropout max hole height
+  dropout_max_width: 32             # CoarseDropout max hole width
+  dropout_p: 0.5                    # CoarseDropout probability
+
+  # Small-target specific
+  small_target_classes: []          # class IDs needing extra copy-paste aug
+
+# ---------------------------------------------------------------------------
+# Early stopping
+# ---------------------------------------------------------------------------
+early_stopping:
+  patience: 15                       # epochs without improvement
+  metric: f1_macro                   # metric to monitor ('f1_macro', 'accuracy')
+  min_delta: 0.0                     # minimum improvement to count
+
+# ---------------------------------------------------------------------------
+# Checkpointing
+# ---------------------------------------------------------------------------
+checkpoint:
+  save_top_k: 3                      # keep top-k checkpoints by monitored metric
+  monitor: f1_macro                  # metric to monitor for checkpoint selection
+  mode: max                          # 'max' (higher is better) or 'min'
+
+# ---------------------------------------------------------------------------
+# Knowledge distillation (optional)
+# ---------------------------------------------------------------------------
+distillation:
+  enabled: false                     # enable knowledge distillation
+  teacher_checkpoint: ""             # path to teacher model checkpoint
+  alpha_soft: 1.0                    # weight for soft-target loss
+  alpha_feat: 0.1                    # weight for feature distillation loss
+  alpha_attn: 0.01                   # weight for attention transfer loss
+  temperature: 4.0                   # temperature for soft targets
+  teacher_backbone: efficientnet_b4  # teacher backbone (if different)
+  adaptation_type: conv1x1           # 'conv1x1' or 'linear'
+
+# ---------------------------------------------------------------------------
+# Mixed precision
+# ---------------------------------------------------------------------------
+amp:
+  enabled: true                      # use torch.cuda.amp autocast
+  opt_level: O1                      # AMP optimisation level
+
+# ---------------------------------------------------------------------------
+# Class names — 枣树「7病8虫」15类核心防控对象 (SRS-SYS02 §4.1.1 IR-02)
+# ---------------------------------------------------------------------------
+# 7 diseases (病害):
+#   枣炭疽病, 枣疯病, 枣树锈病, 枣缩果病, 枣果腐病, 枣褐斑病, 枣叶黑斑病
+# 8 pests (虫害):
+#   枣芽象甲, 枣瘿蚊, 桃小食心虫, 绿盲蝽, 枣尺蠖, 枣镰翅小卷蛾, 枣红蜘蛛, 枣龟蜡蚧
+# ---------------------------------------------------------------------------
+class_names:
+  - 枣炭疽病
+  - 枣疯病
+  - 枣树锈病
+  - 枣缩果病
+  - 枣果腐病
+  - 枣褐斑病
+  - 枣叶黑斑病
+  - 枣芽象甲
+  - 枣瘿蚊
+  - 桃小食心虫
+  - 绿盲蝽
+  - 枣尺蠖
+  - 枣镰翅小卷蛾
+  - 枣红蜘蛛
+  - 枣龟蜡蚧

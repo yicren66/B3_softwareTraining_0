@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reasoning-engine
+  namespace: jujube
+  labels:
+    app: reasoning-engine
+    app.kubernetes.io/name: jujube-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reasoning-engine
+  template:
+    metadata:
+      labels:
+        app: reasoning-engine
+    spec:
+      containers:
+        - name: reasoning-engine
+          image: jujube/reasoning-engine:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: jujube-config
+            - secretRef:
+                name: jujube-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

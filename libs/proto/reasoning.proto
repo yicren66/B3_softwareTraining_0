@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package jujube.reasoning;
+
+import "google/protobuf/empty.proto";
+
+// ---------------------------------------------------------------------------
+// ReasoningEngine — pest prevention planning & domain Q&A
+// ---------------------------------------------------------------------------
+service ReasoningEngine {
+  // Generate a personalized pest prevention plan.
+  rpc GetPreventionPlan(PreventionRequest) returns (PreventionResponse);
+
+  // Answer a domain question with cited sources and follow-up suggestions.
+  rpc QuestionAnswer(QARequest) returns (QAResponse);
+
+  // Report service readiness.
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
+}
+
+// ---------------------------------------------------------------------------
+// Prevention
+// ---------------------------------------------------------------------------
+
+message PreventionRequest {
+  string pest_id                   = 1;
+  string county                    = 2;
+  string growth_stage              = 3;
+  float  temperature               = 4;
+  float  humidity                  = 5;
+  string user_role                 = 6;
+  string previous_recognition_pest = 7;
+  float  previous_confidence       = 8;
+}
+
+message PreventionResponse {
+  PersonalizedExplanation explanation = 1;
+  TargetedPlan            plan        = 2;
+}
+
+message PersonalizedExplanation {
+  string pest_name                     = 1;
+  string cause_analysis                = 2;
+  string current_stage_harm_description = 3;
+}
+
+message TargetedPlan {
+  map<string, PreventionCategory> categories          = 1;
+  string                          priority_sequence_json = 2;
+  string                          integrated_plan         = 3;
+}
+
+message PreventionCategory {
+  repeated PreventionItem items = 1;
+}
+
+message PreventionItem {
+  string method        = 1;
+  string effectiveness = 2;
+  string cost          = 3;
+  string details       = 4;
+}
+
+// ---------------------------------------------------------------------------
+// Q&A
+// ---------------------------------------------------------------------------
+
+message QARequest {
+  string    question        = 1;
+  string    user_role       = 2;
+  string    conversation_id = 3;
+  QAContext context         = 4;
+}
+
+message QAContext {
+  string               county                = 1;
+  PreviousRecognition  previous_recognition  = 2;
+}
+
+message PreviousRecognition {
+  string pest       = 1;
+  float  confidence = 2;
+}
+
+message QAResponse {
+  string           conversation_id      = 1;
+  string           question             = 2;
+  string           answer               = 3;
+  repeated QASource sources             = 4;
+  float            confidence           = 5;
+  repeated string  follow_up_suggestions = 6;
+}
+
+message QASource {
+  string entity_id = 1;
+  string name      = 2;
+  string relation  = 3;
+}
+
+// ---------------------------------------------------------------------------
+// Health
+// ---------------------------------------------------------------------------
+
+message HealthStatus {
+  bool is_ready = 1;
+}

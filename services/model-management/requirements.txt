@@ -1,0 +1,10 @@
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+grpcio>=1.56.0
+protobuf>=4.23.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+httpx>=0.24.0
+prometheus-client>=0.17.0
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0

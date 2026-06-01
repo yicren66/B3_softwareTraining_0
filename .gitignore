@@ -1,0 +1,62 @@
+# =============================================================================
+# Jujube Platform — .gitignore
+# =============================================================================
+
+# --- Bytecode ---
+__pycache__/
+*.py[cod]
+*.pyo
+
+# --- Environment ---
+.env
+*.env.local
+*.env.prod
+
+# --- Model artifacts (keep README so the directory is tracked) ---
+*.pth
+*.onnx
+*.trt
+*.tflite
+models_registry/*
+!models_registry/README.md
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# --- IDE / Editor ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Data volumes (local dev) ---
+datasets/
+neo4j_data/
+pg_data/
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+
+# --- Build / Distribution ---
+dist/
+build/
+*.egg-info/
+*.egg
+
+# --- OS ---
+.directory

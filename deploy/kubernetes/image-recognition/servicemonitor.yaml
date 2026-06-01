@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: image-recognition
+  namespace: jujube
+  labels:
+    app: image-recognition
+    release: prometheus
+    app.kubernetes.io/name: jujube-platform
+spec:
+  selector:
+    matchLabels:
+      app: image-recognition
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s

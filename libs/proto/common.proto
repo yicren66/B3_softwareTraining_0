@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package jujube.common;
+
+import "google/protobuf/timestamp.proto";
+
+// GeoLocation represents a geographic point with administrative hierarchy.
+message GeoLocation {
+  double lat = 1;
+  double lng = 2;
+  string county = 3;
+  string township = 4;
+}
+
+// ErrorResponse conveys error information back to the caller.
+message ErrorResponse {
+  int32 code = 1;
+  string message = 2;
+  string detail = 3;
+}
+
+// Pagination carries page-level metadata for list-style responses.
+message Pagination {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+}
+
+// UserContext carries the authenticated user's identity and scope, intended
+// for propagation via gRPC metadata.
+message UserContext {
+  string user_id = 1;
+  string username = 2;
+
+  // role must be one of: super_admin, work_admin, plant_expert, farmer, guest
+  string role = 3;
+
+  string county = 4;
+  string township = 5;
+}
+
+// AuditLog records an auditable action for compliance and diagnostics.
+message AuditLog {
+  string user_id = 1;
+  string action = 2;
+  string resource_type = 3;
+  string resource_id = 4;
+  string detail_json = 5;
+  string ip_address = 6;
+  google.protobuf.Timestamp created_at = 7;
+}

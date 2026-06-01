@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package jujube.recognition;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "libs/proto/common.proto";
+
+// =============================================================================
+// Image Recognition gRPC Service
+// =============================================================================
+
+service ImageRecognition {
+  // ClassifyImage performs single-image disease/pest classification.
+  rpc ClassifyImage(ClassifyRequest) returns (ClassifyResponse);
+
+  // BatchClassify submits a batch of images for asynchronous classification.
+  rpc BatchClassify(BatchClassifyRequest) returns (BatchClassifyResponse);
+
+  // HealthCheck returns the readiness and model metadata of the service.
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
+}
+
+// =============================================================================
+// Request / Response Messages
+// =============================================================================
+
+message ClassifyRequest {
+  // Raw image bytes (JPEG, PNG, or BMP).
+  bytes image_data = 1;
+
+  // Image format: "JPEG", "PNG", or "BMP".
+  string image_format = 2;
+
+  // Geographic location where the image was captured.
+  jujube.common.GeoLocation location = 3;
+
+  // When true, the response includes a link into the knowledge graph.
+  bool include_kg_link = 4;
+
+  // When true, the response includes a treatment/prevention recommendation.
+  bool include_recommendation = 5;
+}
+
+message ClassifyResponse {
+  // Unique identifier for this classification request (UUID).
+  string request_id = 1;
+
+  // Human-readable disease or pest name, e.g. "枣疯病".
+  string disease_name = 2;
+
+  // Top-level category: "病害" (disease) or "虫害" (pest).
+  string category = 3;
+
+  // Confidence score for the disease/pest classification [0, 1].
+  float confidence = 4;
+
+  // Severity label: "轻度" (mild), "中度" (moderate), or "重度" (severe).
+  string severity = 5;
+
+  // Confidence score for the severity classification [0, 1].
+  float severity_confidence = 6;
+
+  // Affected plant part, e.g. "叶片", "果实", "枝干".
+  string affected_part = 7;
+
+  // Observed symptoms, e.g. "叶片出现黄绿色斑点，边缘卷曲".
+  string symptoms = 8;
+
+  // Whether small-target (e.g. tiny pest, early lesion) detection ran.
+  bool small_target_detected = 9;
+
+  // Detected small targets, populated when small_target_detected is true.
+  repeated SmallTarget small_targets = 10;
+
+  // Summary of treatment/prevention recommendations (populated when
+  // include_recommendation is true in the request).
+  string recommendations_summary = 11;
+
+  // Knowledge-graph entity ID for the disease/pest (populated when
+  // include_kg_link is true in the request).
+  string kg_entity_id = 12;
+
+  // Knowledge-graph prevention-method ID (populated when include_kg_link is
+  // true in the request).
+  string kg_prevention_id = 13;
+
+  // Server-side inference latency in milliseconds.
+  int32 latency_ms = 14;
+
+  // Timestamp when the classification completed.
+  google.protobuf.Timestamp timestamp = 15;
+}
+
+message SmallTarget {
+  // Type label, e.g. "蚜虫", "锈斑".
+  string type = 1;
+
+  // Bounding box of the detected small target.
+  BBox bbox = 2;
+
+  // Detection confidence [0, 1].
+  float confidence = 3;
+}
+
+message BBox {
+  // Top-left x coordinate (pixels).
+  int32 x = 1;
+
+  // Top-left y coordinate (pixels).
+  int32 y = 2;
+
+  // Width in pixels.
+  int32 w = 3;
+
+  // Height in pixels.
+  int32 h = 4;
+}
+
+message BatchClassifyRequest {
+  // One or more raw image payloads.
+  repeated bytes images = 1;
+
+  // Geographic location shared by all images in this batch.
+  jujube.common.GeoLocation location = 2;
+
+  // Optional URL that the server will POST to when batch processing finishes.
+  string callback_url = 3;
+}
+
+message BatchClassifyResponse {
+  // Unique task identifier for polling / callback correlation.
+  string task_id = 1;
+
+  // Number of images accepted for processing.
+  int32 image_count = 2;
+
+  // Current task status: "queued", "processing", "completed", "failed".
+  string status = 3;
+
+  // Estimated seconds until completion (only meaningful while "queued" or
+  // "processing").
+  int32 estimated_completion_seconds = 4;
+}
+
+message HealthStatus {
+  // True when the inference model is loaded and the server is ready to serve.
+  bool is_ready = 1;
+
+  // Name of the deployed model, e.g. "jujube-resnet-50".
+  string model_name = 2;
+
+  // Model version string, e.g. "v3.2.1".
+  string model_version = 3;
+
+  // Number of available GPUs (0 means CPU-only inference).
+  int32 gpu_available = 4;
+}

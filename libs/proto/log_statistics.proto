@@ -1,0 +1,204 @@
+syntax = "proto3";
+
+package jujube.logstatistics;
+
+import "google/protobuf/empty.proto";
+import "libs/proto/common.proto";
+
+// =============================================================================
+// Log & Statistics gRPC Service
+// =============================================================================
+
+service LogStatistics {
+  // RecordRecognition records one or more recognition events in batch.
+  rpc RecordRecognition(RecordRecognitionRequest) returns (RecordRecognitionResponse);
+
+  // RecordFeedback submits expert correction feedback for a recognition.
+  rpc RecordFeedback(RecordFeedbackRequest) returns (RecordFeedbackResponse);
+
+  // GetStats returns aggregated statistics with optional filters.
+  rpc GetStats(GetStatsRequest) returns (GetStatsResponse);
+
+  // HealthCheck returns service readiness and connectivity status.
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// =============================================================================
+// Shared Types
+// =============================================================================
+
+message GeoLocation {
+  double lat = 1;
+  double lng = 2;
+  string county = 3;
+  string township = 4;
+}
+
+message BBox {
+  int32 x = 1;
+  int32 y = 2;
+  int32 w = 3;
+  int32 h = 4;
+}
+
+message SmallTarget {
+  string type = 1;
+  BBox bbox = 2;
+  float confidence = 3;
+}
+
+message RecognitionResult {
+  string disease_name = 1;
+  string category = 2;           // "病害" or "虫害"
+  float confidence = 3;
+  string severity = 4;          // "轻度", "中度", "重度"
+  float severity_confidence = 5;
+  string affected_part = 6;
+  string symptoms = 7;
+  bool small_target_detected = 8;
+  repeated SmallTarget small_targets = 9;
+  string recommendations_summary = 10;
+  string kg_entity_id = 11;
+  string kg_prevention_id = 12;
+}
+
+// =============================================================================
+// RecordRecognition
+// =============================================================================
+
+message RecognitionLogEntry {
+  string request_id = 1;
+  string user_id = 2;
+  int64 timestamp = 3;                   // unix milliseconds
+  GeoLocation geo_location = 4;
+  string image_hash = 5;
+  int32 image_count = 6;
+  bool is_batch = 7;
+  string model_name = 8;
+  string model_version = 9;
+  RecognitionResult recognition_result = 10;
+  bool small_target_detected = 11;
+  float confidence = 12;
+  string severity = 13;
+  int32 latency_ms = 14;
+  string client_ip = 15;
+  string client_platform = 16;
+}
+
+message RecordRecognitionRequest {
+  repeated RecognitionLogEntry logs = 1;
+}
+
+message RecordRecognitionResponse {
+  bool success = 1;
+  int32 recorded_count = 2;
+  string error_message = 3;
+}
+
+// =============================================================================
+// RecordFeedback
+// =============================================================================
+
+message RecordFeedbackRequest {
+  string log_id = 1;
+  string request_id = 2;
+  string corrected_pest = 3;
+  string corrected_severity = 4;
+  string correction_note = 5;
+  string submitted_by = 6;
+}
+
+message RecordFeedbackResponse {
+  bool success = 1;
+  string feedback_id = 2;
+  string error_message = 3;
+}
+
+// =============================================================================
+// GetStats
+// =============================================================================
+
+message GetStatsRequest {
+  string county = 1;
+  string start_date = 2;   // "2006-01-02"
+  string end_date = 3;     // "2006-01-02"
+  string pest_type = 4;
+}
+
+message GetStatsResponse {
+  StatsData stats = 1;
+  HeatmapData heatmap = 2;
+  TrendData trend = 3;
+  string error_message = 4;
+}
+
+message StatsData {
+  int64 total_recognitions = 1;
+  int64 total_feedback = 2;
+  float avg_confidence = 3;
+  float avg_latency_ms = 4;
+  float accuracy_rate = 5;
+  SeverityDist severity_dist = 6;
+  repeated CountyStatEntry county_breakdown = 7;
+  repeated DailyStatEntry daily_stats = 8;
+}
+
+message SeverityDist {
+  int64 mild = 1;
+  int64 moderate = 2;
+  int64 severe = 3;
+}
+
+message CountyStatEntry {
+  string county = 1;
+  int64 count = 2;
+  float avg_conf = 3;
+  string top_pest = 4;
+}
+
+message DailyStatEntry {
+  string date = 1;
+  int64 count = 2;
+  float avg_latency_ms = 3;
+}
+
+message HeatmapData {
+  repeated HeatmapPoint points = 1;
+  int32 max_count = 2;
+}
+
+message HeatmapPoint {
+  string county = 1;
+  double lat = 2;
+  double lng = 3;
+  int32 count = 4;
+  float intensity = 5;       // 0.0-1.0 normalized
+  string top_pest = 6;
+  string top_severity = 7;
+}
+
+message TrendData {
+  string pest_type = 1;
+  repeated TrendDataPoint data_points = 2;
+}
+
+message TrendDataPoint {
+  string date = 1;           // "2006-01-02"
+  int32 count = 2;
+  float avg_confidence = 3;
+  float accuracy = 4;
+}
+
+// =============================================================================
+// HealthCheck
+// =============================================================================
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  bool healthy = 1;
+  bool db_connected = 2;
+  bool redis_connected = 3;
+  int64 uptime_seconds = 4;
+  string version = 5;
+}

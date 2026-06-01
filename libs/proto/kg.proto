@@ -1,0 +1,188 @@
+syntax = "proto3";
+
+package jujube.kg;
+
+import "google/protobuf/empty.proto";
+
+// ---------------------------------------------------------------------------
+// Knowledge Graph gRPC Service
+// ---------------------------------------------------------------------------
+
+service KnowledgeGraph {
+
+  // Retrieve full details for a single entity by its ID.
+  rpc GetEntity(EntityRequest) returns (EntityResponse);
+
+  // Search the knowledge graph with a free-text query.
+  rpc SearchKnowledge(SearchRequest) returns (SearchResponse);
+
+  // Get prevention / treatment recommendations for a pest in a specific context.
+  rpc GetRecommendation(RecommendationRequest) returns (RecommendationResponse);
+
+  // Get a risk prediction for pest outbreaks based on location and growth stage.
+  rpc GetRiskPrediction(RiskRequest) returns (RiskResponse);
+
+  // Service health check.
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
+}
+
+// ---------------------------------------------------------------------------
+// Entity messages
+// ---------------------------------------------------------------------------
+
+message EntityRequest {
+  string entity_id = 1;
+}
+
+message EntityResponse {
+  string entity_id = 1;
+
+  // One of: PestDisease | PreventionMethod | Pesticide | Symptom |
+  //          GrowthCycle | GeographicRegion | ClimateCondition | ControlStrategy
+  string type = 2;
+
+  string name_cn = 3;
+  string category = 4;
+  string description = 5;
+  repeated string typical_symptoms = 6;
+  repeated EntityRelation relations = 7;
+}
+
+message EntityRelation {
+  string relation_type = 1;
+  string target_entity_id = 2;
+  string target_name = 3;
+  float confidence = 4;
+  map<string, string> properties = 5;
+}
+
+// ---------------------------------------------------------------------------
+// Search messages
+// ---------------------------------------------------------------------------
+
+message SearchRequest {
+  string query = 1;
+  string user_role = 2;
+  int32 max_results = 3;
+  bool include_intent_recommendation = 4;
+}
+
+message SearchResponse {
+  string query = 1;
+  ParsedIntent parsed_intent = 2;
+  repeated SearchResult results = 3;
+  repeated IntentRecommendation intent_recommendations = 4;
+}
+
+message ParsedIntent {
+  string intent = 1;
+  float confidence = 2;
+  repeated string entities = 3;
+  repeated MappedPest mapped_pests = 4;
+}
+
+message MappedPest {
+  string entity_id = 1;
+  string name = 2;
+  float match_confidence = 3;
+}
+
+message SearchResult {
+  string entity_id = 1;
+  string name = 2;
+  float relevance_score = 3;
+  string summary = 4;
+  repeated PreventionSummary prevention_methods = 5;
+}
+
+message PreventionSummary {
+  string name = 1;
+  string category = 2;
+}
+
+message IntentRecommendation {
+  string entity_id = 1;
+  string name = 2;
+  string reason = 3;
+  float relevance_score = 4;
+}
+
+// ---------------------------------------------------------------------------
+// Recommendation messages
+// ---------------------------------------------------------------------------
+
+message RecommendationRequest {
+  string pest_id = 1;
+  string county = 2;
+  string growth_stage = 3;
+  float temperature = 4;
+  float humidity = 5;
+}
+
+message RecommendationResponse {
+  string pest_id = 1;
+  string pest_name = 2;
+  map<string, PreventionList> recommendations = 3;
+  ComprehensiveStrategy comprehensive_strategy = 4;
+}
+
+message PreventionList {
+  repeated PreventionItem items = 1;
+}
+
+message PreventionItem {
+  string method = 1;
+  string effectiveness = 2;
+  string cost = 3;
+  int32 safety_interval_days = 4;
+}
+
+message ComprehensiveStrategy {
+  repeated string priority_sequence = 1;
+  string integrated_plan = 2;
+  string risk_warning = 3;
+}
+
+// ---------------------------------------------------------------------------
+// Risk / Prediction messages
+// ---------------------------------------------------------------------------
+
+message RiskRequest {
+  string county = 1;
+  string growth_stage = 2;
+}
+
+message RiskResponse {
+  string county = 1;
+  string current_growth_stage = 2;
+  CurrentWeather current_weather = 3;
+  repeated RiskAssessment risk_assessment = 4;
+  bool alert_triggered = 5;
+  repeated string alert_pests = 6;
+}
+
+message CurrentWeather {
+  float temperature = 1;
+  float humidity = 2;
+  float precipitation_7d = 3;
+  string weather_trend = 4;
+}
+
+message RiskAssessment {
+  string pest_id = 1;
+  string pest_name = 2;
+  string risk_level = 3;
+  float risk_score = 4;
+  string reasoning = 5;
+  string recommended_action = 6;
+}
+
+// ---------------------------------------------------------------------------
+// Health check messages
+// ---------------------------------------------------------------------------
+
+message HealthStatus {
+  bool is_ready = 1;
+  int32 entity_count = 2;
+  int32 triple_count = 3;
+}

@@ -1,0 +1,163 @@
+# =============================================================================
+# Jujube Platform — Neo4j StatefulSet + Headless Service
+# =============================================================================
+
+# --- Headless Service ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo4j
+  namespace: jujube-platform
+  labels:
+    app: neo4j
+    app.kubernetes.io/part-of: jujube-platform
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: neo4j
+  ports:
+    - name: http
+      protocol: TCP
+      port: 7474
+      targetPort: 7474
+    - name: bolt
+      protocol: TCP
+      port: 7687
+      targetPort: 7687
+
+---
+# --- StatefulSet ---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: neo4j
+  namespace: jujube-platform
+  labels:
+    app: neo4j
+    app.kubernetes.io/part-of: jujube-platform
+    app.kubernetes.io/component: graph-database
+spec:
+  serviceName: neo4j
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo4j
+  template:
+    metadata:
+      labels:
+        app: neo4j
+        app.kubernetes.io/part-of: jujube-platform
+        app.kubernetes.io/component: graph-database
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: neo4j
+          image: neo4j:5-enterprise
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 7474
+              protocol: TCP
+            - name: bolt
+              containerPort: 7687
+              protocol: TCP
+          env:
+            - name: NEO4J_AUTH
+              valueFrom:
+                secretRef:
+                  name: jujube-secrets
+                  optional: false
+              # Expected format: "neo4j/<password>" — set via init workaround
+            - name: NEO4J_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: jujube-config
+                  key: NEO4J_USER
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jujube-secrets
+                  key: NEO4J_PASSWORD
+            - name: NEO4J_ACCEPT_LICENSE_AGREEMENT
+              value: "yes"
+            - name: NEO4J_server_memory_heap_initial__size
+              value: "1024m"
+            - name: NEO4J_server_memory_heap_max__size
+              value: "2048m"
+            - name: NEO4J_server_memory_pagecache_size
+              value: "1024m"
+            - name: NEO4J_dbms_connector_bolt_listen__address
+              value: "0.0.0.0:7687"
+            - name: NEO4J_dbms_connector_http_listen__address
+              value: "0.0.0.0:7474"
+            - name: NEO4J_dbms_default__database
+              value: "neo4j"
+            - name: NEO4J_dbms_security_auth__enabled
+              value: "true"
+          command:
+            - /bin/bash
+            - -c
+            - |
+              export NEO4J_AUTH="${NEO4J_USER}/${NEO4J_PASSWORD}"
+              exec /startup/docker-entrypoint.sh neo4j
+          volumeMounts:
+            - name: neo4j-data
+              mountPath: /data
+            - name: neo4j-logs
+              mountPath: /logs
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+          livenessProbe:
+            tcpSocket:
+              port: 7687
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 7474
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 7474
+            runAsGroup: 7474
+            fsGroup: 7474
+            capabilities:
+              drop:
+                - ALL
+  volumeClaimTemplates:
+    - metadata:
+        name: neo4j-data
+        labels:
+          app: neo4j
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: standard
+    - metadata:
+        name: neo4j-logs
+        labels:
+          app: neo4j
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: standard

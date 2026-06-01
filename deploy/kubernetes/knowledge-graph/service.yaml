@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: knowledge-graph
+  namespace: jujube
+  labels:
+    app: knowledge-graph
+spec:
+  type: ClusterIP
+  selector:
+    app: knowledge-graph
+  ports:
+    - port: 9000
+      targetPort: 9000
+      protocol: TCP

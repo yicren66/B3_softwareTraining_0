@@ -1,0 +1,33 @@
+entity_id,name_cn,name_en,category,scientific_name,description,typical_symptoms,severity_levels,is_core
+KG-ENT-001,枣炭疽病,Jujube Anthracnose,disease,Colletotrichum gloeosporioides,由胶孢炭疽菌引起的枣树果实和叶片病害，高温高湿条件下易流行，可导致大量落果和烂果,果实出现褐色凹陷病斑;病斑上有轮纹状黑色小点;叶片出现不规则褐斑;严重时果实腐烂脱落,轻度;中度;重度,true
+KG-ENT-002,枣疯病,Jujube Witches Broom,disease,Candidatus Phytoplasma ziziphi,由植原体引起的毁灭性病害，通过叶蝉传播和嫁接传播，病树出现丛枝和花器返祖现象,枝叶丛生呈扫帚状;花器退化成叶状结构;节间缩短;叶片变小黄化;病树逐渐枯死,轻度;中度;重度,true
+KG-ENT-003,枣树锈病,Jujube Rust,disease,Phakopsora ziziphi-vulgaris,由枣锈病菌引起的叶片病害，主要危害叶片，严重时叶片大量脱落影响果实产量和品质,叶片背面出现黄褐色锈状粉末孢子堆;叶片正面出现褪绿黄斑;严重时叶片枯黄早落;树势衰弱,轻度;中度;重度,true
+KG-ENT-004,枣缩果病,Jujube Fruit Shrink Disease,disease,Alternaria alternata,主要由链格孢菌等复合侵染引起的果实病害，果实膨大期至成熟期发病，导致果实皱缩脱落,果实表面出现淡褐色小斑;病斑迅速扩大果肉坏死;果实皱缩干瘪;果皮变为红褐色至黑褐色;病果易脱落,轻度;中度;重度,true
+KG-ENT-005,枣果腐病,Jujube Fruit Rot,disease,Fusarium spp.,由镰刀菌等多种真菌引起的果实腐烂病，多在果实近成熟期发生，造成果实腐烂失去商品价值,果实表面出现水渍状斑;病斑扩大后果肉软腐;病部产生白色或粉色霉层;果实腐烂脱落;有酸臭味,轻度;中度;重度,true
+KG-ENT-006,枣褐斑病,Jujube Brown Spot,disease,Phoma spp.,由茎点霉属真菌引起的叶部和果实病害，多雨季节发生严重，导致叶片枯焦和果实斑点,叶片出现圆形或不规则褐色斑点;病斑边缘深褐色中央灰白色;严重时病斑连片叶片焦枯;果实出现褐色凹陷斑,轻度;中度;重度,true
+KG-ENT-007,枣叶黑斑病,Jujube Black Leaf Spot,disease,Alternaria spp.,由链格孢属真菌引起的叶片病害，主要危害叶片和新梢，严重时导致早期落叶,叶片出现黑色圆形小斑点;病斑逐渐扩大边缘有黄色晕圈;严重时叶片布满黑斑;病叶早落;新梢生长受阻,轻度;中度;重度,true
+KG-ENT-008,枣芽象甲,Jujube Bud Weevil,pest,Scythropus yasumatsui,枣树早春主要害虫之一，成虫取食嫩芽和幼叶，严重时将嫩芽全部吃光导致树体光秃,成虫啃食嫩芽和幼叶;叶片出现缺刻和孔洞;严重时嫩芽被吃光;幼果被害出现疤痕;树体生长受阻,轻度;中度;重度,true
+KG-ENT-009,枣瘿蚊,Jujube Gall Midge,pest,Dasineura datifolia,以幼虫危害枣树嫩叶的刺吸式害虫，幼虫在叶片组织内取食形成虫瘿，影响叶片光合作用,叶片卷曲形成不规则虫瘿;虫瘿初为绿色后变红褐色;叶片畸形扭曲;严重时叶片枯焦早落;新梢生长受抑制,轻度;中度;重度,true
+KG-ENT-010,桃小食心虫,Peach Fruit Borer,pest,Carposina sasakii,以幼虫蛀食枣果的重要害虫，幼虫在果内取食果肉和种仁，是枣树生产中最具破坏性的害虫之一,幼虫蛀入果实取食果肉;果面有蛀入孔和虫粪;果实内部充满虫粪;被害果提前变红脱落;虫道内可见幼虫,轻度;中度;重度,true
+KG-ENT-011,绿盲蝽,Green Plant Bug,pest,Apolygus lucorum,以成虫和若虫刺吸枣树嫩叶、嫩芽和幼果汁液的多食性害虫，造成叶片穿孔和果实畸形,嫩叶被刺吸后出现小孔;叶片展开后孔洞扩大呈破叶状;幼果被刺吸后出现凹陷斑;果实畸形硬化;嫩芽枯萎,轻度;中度;重度,true
+KG-ENT-012,枣尺蠖,Jujube Looper,pest,Chihuo zao,以幼虫暴食枣树叶片和嫩芽的食叶害虫，大发生时可短期内将整株叶片吃光,幼虫咀嚼叶片造成缺刻;大龄幼虫可吃光全叶仅留主脉;严重时整株叶片被食尽;树势极度衰弱;当年和次年产量锐减,轻度;中度;重度,true
+KG-ENT-013,枣镰翅小卷蛾,Jujube Leaf Roller,pest,Ancylis sativa,以幼虫卷叶危害的食叶害虫，幼虫吐丝将叶片卷起在内取食叶肉，影响光合作用和树势,幼虫吐丝将嫩叶纵卷;卷叶内取食叶肉留下表皮;叶片枯黄;严重时全树叶片卷曲;影响花芽分化和产量,轻度;中度;重度,true
+KG-ENT-014,枣红蜘蛛,Jujube Red Spider Mite,pest,Tetranychus cinnabarinus,以成螨和若螨在叶片背面刺吸汁液的微小害虫，高温干旱季节繁殖迅速，严重时导致叶片失绿焦枯,叶片出现褪绿小点;严重时叶片呈灰白色;叶背面有细密蛛网;叶片焦枯早落;树势衰弱果实品质下降,轻度;中度;重度,true
+KG-ENT-015,枣龟蜡蚧,Jujube Wax Scale,pest,Ceroplastes japonicus,以若虫和雌成虫固定在枝干和叶片上刺吸汁液的介壳虫类害虫，分泌蜡质介壳保护虫体,枝干和叶片上附着白色或灰白色蜡壳;叶片褪绿发黄;排泄物诱发煤污病;枝干生长受阻;严重时枝条枯死,轻度;中度;重度,true
+KG-ENT-016,枣裂果病,Jujube Fruit Cracking Disease,disease,Non-infectious (Physiological),由水分失调引起的生理性病害，果实近成熟期遇雨或灌溉不当导致果皮开裂，降低商品价值,果实表面出现纵向或横向裂纹;裂口处果肉外露;裂口处易感染霉菌腐烂;多发生在果实成熟期;严重时大量裂果脱落,轻度;中度;重度,false
+KG-ENT-017,枣日灼病,Jujube Sunburn Disease,disease,Non-infectious (Physiological),由强烈阳光直射果实引起的生理性病害，高温干旱季节发生严重，受害果面组织坏死,果实向阳面出现淡褐色至深褐色坏死斑;病部果皮硬化凹陷;病斑边缘不明显;严重时果肉变褐坏死;病果易脱落或形成僵果,轻度;中度;重度,false
+KG-ENT-018,枣黄叶病缺铁,Jujube Iron Deficiency Yellowing,disease,Non-infectious (Nutritional),因土壤缺铁或根系吸收障碍引起的营养缺乏症，碱性土壤或根系受损时易发生，新梢顶叶首先表现症状,新梢顶部叶片叶肉变黄而叶脉仍绿;严重时全叶黄白化;叶片变小变薄;植株生长缓慢;长期缺铁导致枯梢,轻度;中度;重度,false
+KG-ENT-019,枣根朽病,Jujube Root Rot,disease,Armillariella tabescens,由蜜环菌等土传病原菌引起的根部病害，病菌从根部伤口侵入，破坏根系导致树体逐渐衰弱死亡,地上部叶片黄化萎蔫;树势逐年衰弱;根部皮层腐烂木质部腐朽;根部有白色菌丝层;秋季根部长出蜜黄色蘑菇;病树最终枯死,中度;重度,false
+KG-ENT-020,枣花叶病,Jujube Mosaic Disease,disease,Jujube Mosaic Virus (JuMV),由病毒引起的系统性病害，通过嫁接和蚜虫传播，病树叶片出现花叶症状影响光合作用,叶片出现黄绿相间的花叶斑驳;叶面凹凸不平;叶片变小畸形;植株矮化生长缓慢;果实变小品质下降,轻度;中度;重度,false
+KG-ENT-021,枣树干腐病,Jujube Trunk Dry Rot,disease,Botryosphaeria dothidea,由葡萄座腔菌引起的枝干病害，病菌从伤口或皮孔侵入，导致枝干皮层坏死干腐,枝干皮层出现暗褐色坏死斑;病斑凹陷干缩;病健交界处开裂;后期病部出现小黑点(分生孢子器);病枝枯死,中度;重度,false
+KG-ENT-022,枣树腐烂病,Jujube Canker,disease,Valsa ceratosperma,由黑腐皮壳菌引起的枝干病害，病菌在皮层内扩展导致皮层腐烂，严重时环缢枝干导致枯死,枝干皮层出现红褐色坏死;病部组织松软有酒糟味;后期病部干缩凹陷;病部产生黑色小粒点;病斑环缢导致上部枯死,重度,false
+KG-ENT-023,枣介壳虫,Jujube Scale Insect,pest,Diaspidiotus perniciosus,以雌成虫和若虫固定在枝干等部位刺吸汁液为害的介壳虫，虫体被有圆形介壳保护,枝干上密布灰褐色圆形介壳;被害处皮层坏死凹陷;树势衰弱枝条枯死;排泄物诱发煤污病;严重时导致整株死亡,中度;重度,false
+KG-ENT-024,枣瘿螨,Jujube Gall Mite,pest,Eriophyes sp.,以螨在叶片和嫩芽上刺吸危害形成虫瘿的微小害螨，虫体微小肉眼难以观察但危害症状明显,叶片出现小泡状隆起;虫瘿密集叶片卷曲畸形;嫩芽被害形成丛生状;新梢生长受阻;严重时叶片大量脱落,中度;重度,false
+KG-ENT-025,枣粘虫,Jujube Leaf Tying Moth,pest,Ancylis sativa,以幼虫吐丝缀叶潜食的卷叶蛾类害虫，幼虫将2-3片叶缀连在一起在内取食,幼虫吐丝将叶片粘缀成苞;虫苞内有幼虫和虫粪;苞内叶肉被食仅留表皮;叶片枯焦;花序和幼果也被危害,轻度;中度;重度,false
+KG-ENT-026,枣飞象,Jujube Flying Weevil,pest,Phyllobius spp.,以成虫取食枣树嫩叶和幼芽的象甲科害虫，成虫善飞行有群集危害习性,成虫群集取食嫩叶;叶片边缘出现弧形缺刻;嫩芽被咬断;叶柄被咬伤致叶片脱落;苗木和幼树受害最重,中度;重度,false
+KG-ENT-027,枣大球蚧,Jujube Large Scale,pest,Eulecanium gigantea,以雌成虫固定在枝条上刺吸汁液的大型介壳虫，虫体膨大呈球形，单头雌虫产卵量大繁殖力强,枝条上附着大型半球形介壳;排泄物滴落诱发煤污;被害枝生长衰弱;叶片黄化早落;严重时大枝枯死,中度;重度,false
+KG-ENT-028,枣实蝇,Jujube Fruit Fly,pest,Carpomya vesuviana,以幼虫蛀食枣果的检疫性害虫，雌虫产卵于果皮下幼虫在果内蛀食造成果实腐烂脱落,果面有产卵痕;幼虫在果内蛀食形成虫道;果实内部腐烂;被害果提前着色;果实大量脱落,中度;重度,false
+KG-ENT-029,枣天牛,Jujube Longhorn Beetle,pest,Apriona germari,以幼虫钻蛀枣树枝干木质部的蛀干害虫，幼虫在枝干内蛀食形成隧道破坏输导组织,枝干上有圆形羽化孔;蛀道内有木屑和虫粪;被害枝生长衰弱;遇大风易折断;严重时整株枯死,重度,false
+KG-ENT-030,枣豹蠹蛾,Jujube Leopard Moth,pest,Zeuzera coffeae,以幼虫钻蛀枣树枝条和主干的蛀干害虫，幼虫在木质部内蛀食形成长隧道,枝干上蛀孔有虫粪排出;蛀道沿髓心纵向延伸;被害枝上部枯萎;幼树被害后易从蛀孔处折断;蛀孔周围皮层坏死,中度;重度,false
+KG-ENT-031,枣灰斑病,Jujube Gray Spot,disease,Pestalotiopsis spp.,由拟盘多毛孢属真菌引起的叶部和果实病害，多雨潮湿环境发病重，导致叶片枯斑和果实斑点,叶片出现近圆形灰白色病斑;病斑边缘褐色有黄色晕圈;病斑上散生小黑点;多个病斑融合成不规则大斑;叶片早落,轻度;中度;重度,false
+KG-ENT-032,枣白粉病,Jujube Powdery Mildew,disease,Phyllactinia spp.,由白粉菌科真菌引起的叶片和嫩梢病害，干燥温暖气候发病重，病部覆盖白色粉状物,叶片和嫩梢表面出现白色粉状霉层;病叶皱缩卷曲;严重时白粉覆盖整个叶面;新梢生长不良;花和幼果也可受害,轻度;中度;重度,false

@@ -1,0 +1,308 @@
+syntax = "proto3";
+
+package jujube.model;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// ---------------------------------------------------------------------------
+// ModelManagement service — training lifecycle, versioning, deployment,
+// rollback, and health checks.
+// ---------------------------------------------------------------------------
+service ModelManagement {
+  // Trigger a training job (full, incremental, distillation, or fine-tune).
+  rpc TriggerTraining(TrainingRequest) returns (TrainingResponse);
+
+  // List model versions with optional status filtering and pagination.
+  rpc ListVersions(VersionsRequest) returns (VersionsResponse);
+
+  // Deploy a model version using a canary or full rollout strategy.
+  rpc DeployModel(DeployRequest) returns (DeployResponse);
+
+  // Roll back the active deployment to a previous version.
+  rpc RollbackModel(RollbackRequest) returns (RollbackResponse);
+
+  // Health check for the model-serving infrastructure.
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
+}
+
+// ---------------------------------------------------------------------------
+// Training
+// ---------------------------------------------------------------------------
+
+message TrainingRequest {
+  // Unique name of the model family (e.g. "resnet-classifier").
+  string model_name = 1;
+
+  // Type of training job to run.
+  // Valid values: "full_train", "incremental", "distillation", "fine_tune".
+  string job_type = 2;
+
+  // Base model version to start from. Required for incremental, distillation,
+  // and fine_tune jobs; ignored for full_train.
+  string base_model_version = 3;
+
+  // Dataset version identifier to use for training.
+  string dataset_version = 4;
+
+  // Hyper-parameter and augmentation configuration.
+  TrainingConfig config = 5;
+
+  // ID of the user who initiated this training request.
+  string user_id = 6;
+}
+
+message TrainingConfig {
+  // Backbone architecture (e.g. "resnet50", "efficientnet-b0").
+  string backbone = 1;
+
+  // Number of output classes.
+  int32 num_classes = 2;
+
+  // Input image dimensions as [height, width].
+  repeated int32 image_size = 3;
+
+  // Batch size for training.
+  int32 batch_size = 4;
+
+  // Initial learning rate.
+  float learning_rate = 5;
+
+  // Number of training epochs.
+  int32 epochs = 6;
+
+  // Optimizer name (e.g. "adam", "sgd", "adamw").
+  string optimizer = 7;
+
+  // Learning-rate scheduler (e.g. "cosine", "step", "plateau").
+  string scheduler = 8;
+
+  // --- Elastic Weight Consolidation (EWC) ---
+
+  // Enable EWC to mitigate catastrophic forgetting.
+  bool use_ewc = 9;
+
+  // Regularisation strength for the EWC penalty term.
+  float ewc_lambda = 10;
+
+  // --- Knowledge Distillation ---
+
+  // Enable knowledge distillation from a teacher model.
+  bool use_distillation = 11;
+
+  // Teacher model version to distill from.
+  string teacher_model_version = 12;
+
+  // Softmax temperature for distillation softening.
+  float distill_temperature = 13;
+
+  // Weight assigned to the distillation loss (0–1).
+  float distill_alpha = 14;
+
+  // Data-augmentation settings.
+  AugmentationConfig augmentation = 15;
+}
+
+message AugmentationConfig {
+  // Random horizontal flip.
+  bool horizontal_flip = 1;
+
+  // Random vertical flip.
+  bool vertical_flip = 2;
+
+  // Random rotation range in degrees (e.g. 15 means +/-15°).
+  int32 rotation_range = 3;
+
+  // Brightness adjustment range [min, max] (e.g. [0.8, 1.2]).
+  repeated float brightness_range = 4;
+
+  // Zoom range [min, max] (e.g. [0.9, 1.1]).
+  repeated float zoom_range = 5;
+}
+
+message TrainingResponse {
+  // Unique identifier for the asynchronous training job.
+  string job_id = 1;
+
+  // Current status string (e.g. "queued", "running", "completed", "failed").
+  string status = 2;
+
+  // Estimated wall-clock duration in hours.
+  float estimated_duration_hours = 3;
+}
+
+// ---------------------------------------------------------------------------
+// Version listing
+// ---------------------------------------------------------------------------
+
+message VersionsRequest {
+  // Model family name.
+  string model_name = 1;
+
+  // Optional filter by version status (e.g. "ready", "training", "failed").
+  string status_filter = 2;
+
+  // 1-based page number.
+  int32 page = 3;
+
+  // Number of items per page.
+  int32 size = 4;
+}
+
+message VersionsResponse {
+  // List of model versions for the current page.
+  repeated ModelVersion versions = 1;
+
+  // Total number of versions that match the filter.
+  int32 total = 2;
+
+  // Current page number (echoed from request).
+  int32 page = 3;
+
+  // Page size (echoed from request).
+  int32 size = 4;
+}
+
+message ModelVersion {
+  // Model family name.
+  string model_name = 1;
+
+  // Unique version identifier (e.g. "v1.3.0", "20240601-abc123").
+  string version = 2;
+
+  // Lifecycle status: "training", "validating", "ready", "deprecated", etc.
+  string status = 3;
+
+  // Whether this version is currently serving production traffic.
+  bool is_production = 4;
+
+  // ML framework used (e.g. "pytorch", "tensorflow", "onnx").
+  string framework = 5;
+
+  // Backbone architecture name at training time.
+  string backbone = 6;
+
+  // Dataset version this model was trained on.
+  string dataset_version = 7;
+
+  // Evaluation metrics.
+  ModelMetrics metrics = 8;
+
+  // Timestamp when training completed.
+  google.protobuf.Timestamp training_date = 9;
+
+  // Timestamp when this version was deployed (unset if never deployed).
+  google.protobuf.Timestamp deployed_at = 10;
+}
+
+message ModelMetrics {
+  // Overall accuracy.
+  float accuracy = 1;
+
+  // Macro-averaged precision across all classes.
+  float precision_macro = 2;
+
+  // Macro-averaged recall across all classes.
+  float recall_macro = 3;
+
+  // Macro-averaged F1 score across all classes.
+  float f1_macro = 4;
+
+  // Per-class metrics keyed by class label.
+  map<string, PerClassMetrics> per_class = 5;
+}
+
+message PerClassMetrics {
+  // Per-class accuracy.
+  float accuracy = 1;
+
+  // Per-class F1 score.
+  float f1 = 2;
+}
+
+// ---------------------------------------------------------------------------
+// Deployment
+// ---------------------------------------------------------------------------
+
+message DeployRequest {
+  // Model family name.
+  string model_name = 1;
+
+  // Version to deploy.
+  string version = 2;
+
+  // Deployment strategy: "canary" or "full".
+  string deploy_strategy = 3;
+
+  // Percentage of traffic routed to the canary (1–100), only used when
+  // deploy_strategy is "canary".
+  int32 canary_percentage = 4;
+
+  // Observation window in minutes before the canary is automatically promoted
+  // (or rolled back if health checks degrade).
+  int32 validate_duration_minutes = 5;
+}
+
+message DeployResponse {
+  // Unique deployment operation identifier.
+  string deployment_id = 1;
+
+  // Strategy used for this deployment ("canary" or "full").
+  string strategy = 2;
+
+  // The version that was serving production traffic before this deployment.
+  string current_production = 3;
+
+  // The canary version (set only when strategy is "canary").
+  string canary_version = 4;
+
+  // Canary traffic share in percent.
+  int32 canary_percentage = 5;
+
+  // When the deployment was started.
+  google.protobuf.Timestamp started_at = 6;
+
+  // When the canary will be auto-promoted (set only for canary deployments).
+  google.protobuf.Timestamp auto_promote_at = 7;
+}
+
+// ---------------------------------------------------------------------------
+// Rollback
+// ---------------------------------------------------------------------------
+
+message RollbackRequest {
+  // Model family name.
+  string model_name = 1;
+
+  // Version to roll back to.
+  string target_version = 2;
+
+  // Reason for the rollback (logged for audit trail).
+  string reason = 3;
+}
+
+message RollbackResponse {
+  // Unique deployment identifier for this rollback operation.
+  string deployment_id = 1;
+
+  // The version that was active before the rollback.
+  string previous_version = 2;
+
+  // The version now serving production traffic.
+  string new_version = 3;
+
+  // Status of the rollback operation (e.g. "in_progress", "completed").
+  string status = 4;
+}
+
+// ---------------------------------------------------------------------------
+// Health
+// ---------------------------------------------------------------------------
+
+message HealthStatus {
+  // Whether the model-serving infrastructure is ready to accept requests.
+  bool is_ready = 1;
+
+  // The model version currently serving production traffic.
+  string active_model_version = 2;
+}

@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-recognition
+  namespace: jujube
+  labels:
+    app: image-recognition
+    app.kubernetes.io/name: jujube-platform
+    app.kubernetes.io/component: inference
+spec:
+  type: ClusterIP
+  selector:
+    app: image-recognition
+  ports:
+    - name: grpc
+      port: 9001
+      targetPort: 9001
+      protocol: TCP
+    - name: http-metrics
+      port: 8001
+      targetPort: 8001
+      protocol: TCP
